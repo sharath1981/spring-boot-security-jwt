@@ -61,7 +61,7 @@ public class JwtUtil {
     public Boolean validateJwt(String jwt) {
         try {
             getAllClaimsFromJwt(jwt);
-            return isBlacklistedJwt(jwt);
+            return isJwtBlacklisted(jwt);
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature... {}", ex.getMessage());
         } catch (MalformedJwtException ex) {
@@ -76,7 +76,7 @@ public class JwtUtil {
         return Boolean.FALSE;
     }
 
-    public Boolean isBlacklistedJwt(String jwt) {
+    public Boolean isJwtBlacklisted(String jwt) {
         //TODO: add blacklisted jwt condition, retrieve jwt from redis cache to verify will help in logout
         return Boolean.TRUE;
     }
