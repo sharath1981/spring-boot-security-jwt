@@ -37,7 +37,10 @@ public class JwtUtil {
     }
 
     private Claims getAllClaimsFromJwt(String jwt) {
-        return Jwts.parser().setSigningKey(jwtSecretkey).parseClaimsJws(jwt).getBody();
+        return Jwts.parser()
+                   .setSigningKey(jwtSecretkey)
+                   .parseClaimsJws(jwt)
+                   .getBody();
     }
 
     public String generateJwt(String subject) {

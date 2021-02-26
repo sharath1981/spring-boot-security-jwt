@@ -12,13 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.svh.springbootsecurityjwt.constant.AppConstants;
 import com.svh.springbootsecurityjwt.util.JwtUtil;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private Optional<UsernamePasswordAuthenticationToken> authenticateRequest(HttpServletRequest request) {
         return getJwtFromRequest(request).filter(jwtUtil::validateJwt)
                                          .map(jwtUtil::getUsernameFromJwt)
-                                         .filter(StringUtils::hasText)
+                                         .filter(Strings::isNotBlank)
                                          .map(userDetailsService::loadUserByUsername)
                                          .map(userDetails -> createUsernamePasswordAuthenticationToken(userDetails, request));
     }
@@ -57,10 +57,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private Optional<String> getJwtFromRequest(HttpServletRequest request) {
         final var bearerToken = request.getHeader(AppConstants.AUTHORIZATION);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(AppConstants.BEARER)) {
-            return Optional.of(bearerToken.substring(7));
-        }
-        return Optional.empty();
+        return Optional.ofNullable(bearerToken)
+                       .filter(Strings::isNotBlank)
+                       .filter(token->token.startsWith(AppConstants.BEARER))
+                       .map(token->token.replace(AppConstants.BEARER, Strings.EMPTY));
     }
-
 }

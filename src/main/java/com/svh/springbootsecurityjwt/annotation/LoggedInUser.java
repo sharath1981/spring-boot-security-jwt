@@ -12,6 +12,4 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @AuthenticationPrincipal
-public @interface LoggedInUser {
-    
-}
+public @interface LoggedInUser { }
