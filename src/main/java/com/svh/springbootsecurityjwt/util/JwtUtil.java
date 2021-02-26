@@ -2,10 +2,14 @@ package com.svh.springbootsecurityjwt.util;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Function;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.svh.springbootsecurityjwt.constant.AppConstants;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -76,5 +80,13 @@ public class JwtUtil {
         //TODO: add blacklisted jwt condition, retrieve jwt from redis cache to verify will help in logout
         return Boolean.TRUE;
     }
+
+	public Optional<String> getJwtFromRequest(HttpServletRequest request) {
+	    final var bearerToken = request.getHeader(AppConstants.AUTHORIZATION);
+	    return Optional.ofNullable(bearerToken)
+	                   .filter(Strings::isNotBlank)
+	                   .filter(token->token.startsWith(AppConstants.BEARER))
+	                   .map(token->token.replace(AppConstants.BEARER, Strings.EMPTY));
+	}
 
 }
